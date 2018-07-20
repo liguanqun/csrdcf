@@ -60,22 +60,70 @@
 
 %% 
 % clc;clear all;
-x=1:1:66;
-y =depthimagehist
- subplot 211
-%   scatter(x,y,'k');grid on;
-plot(x,y,'r--','linewidth',2);grid on;
+% x=1:1:66;
+% y =depthimagehist
+%  subplot 211
+% %   scatter(x,y,'k');grid on;
+% plot(x,y,'r--','linewidth',2);grid on;
+% 
+% f = fittype('a*exp(-((x-b)/c)^2)+d*exp(-((x-e)/f)^2)');
+% [cfun,gof] = fit(x(:),y(:),f);
+% 
+% 
+% yo = cfun.a*exp(-((x-cfun.b)/cfun.c).^2)+cfun.d*exp(-((x-cfun.e)/cfun.f).^2);
+% 
+% subplot 212
+% %  scatter(x,y,'k');hold on;
+% grid on;
+% plot(x,yo,'r--','linewidth',2);
+result_txt_path =('/home/orbbec/dskcf_result_c/');
+txt_files_tmp= dir([result_txt_path '*.txt']);
+nameCell = cell(length(txt_files_tmp),1);
+txt_files_full_path = cell(length(txt_files_tmp),1);
+for i = 1:length(txt_files_tmp)
+    nameCell{i} = txt_files_tmp(i).name; 
+    txt_files_full_path{i} =[result_txt_path nameCell{i}];
+end
+txt_name= sort_nat(nameCell)
+txt_full_path =sort_nat(txt_files_full_path)
 
-f = fittype('a*exp(-((x-b)/c)^2)+d*exp(-((x-e)/f)^2)');
-[cfun,gof] = fit(x(:),y(:),f);
+for i = 1:length(txt_files_tmp)
+x=load(txt_full_path{i});
+txt_full_path{i}
+for j=1:size(x,1)
+    
+        row_x =x(j,:);
+    
+        if(row_x(5) > 0)             
+            name = ['/home/orbbec/dskcf_result_c_modify/' txt_name{i}];
+            fp=fopen(name,'a');       
+            fprintf(fp,'%s\r\n','NaN,NaN,NaN,NaN,1'); 
+            fclose(fp);
+            disp('NaN,NaN,NaN,NaN,1');
+        else
+            a=[row_x(1:2) row_x(1:2)+row_x(3:4) 0]  ;
+            name = ['/home/orbbec/dskcf_result_c_modify/' txt_name{i}];
+          fp=fopen(name,'a');
+            fprintf(fp,'%d,%d,%d,%d,%d\r\n',a);%注意：\r\n为换
+            fclose(fp);
+
+        end
+    
+end
 
 
-yo = cfun.a*exp(-((x-cfun.b)/cfun.c).^2)+cfun.d*exp(-((x-cfun.e)/cfun.f).^2);
+end
 
-subplot 212
-%  scatter(x,y,'k');hold on;
-grid on;
-plot(x,yo,'r--','linewidth',2);
+
+
+
+
+
+
+
+
+
+
 
 
 

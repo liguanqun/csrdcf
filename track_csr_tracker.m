@@ -67,23 +67,24 @@ function [tracker, region] = track_csr_tracker(tracker, img)
         tracker.currentScaleFactor * tracker.base_target_sz];
 
     %do a scale space search aswell
+    %尺度子空间的搜索
     xs = get_scale_subwindow(img, c([2,1]), tracker.base_target_sz([2,1]), ...
         tracker.currentScaleFactor * tracker.scaleSizeFactors, ...
         tracker.scale_window, tracker.scale_model_sz([2,1]), []);
     xsf = fft(xs,[],2);
-    % scale correlation response
+    % scale correlation response 尺度相关运算的 respone
     scale_response = real(ifft(sum(tracker.sf_num .* xsf, 1) ./ (tracker.sf_den + 1e-2) ));
     recovered_scale = ind2sub(size(scale_response),find(scale_response == max(scale_response(:)), 1));
-    %set the scale
+    %set the scale 设置尺度
     currentScaleFactor = tracker.currentScaleFactor * tracker.scaleFactors(recovered_scale);
 
-    % check for min/max scale
+    % check for min/max scale最大最小值检查
     if currentScaleFactor < tracker.min_scale_factor
         currentScaleFactor = tracker.min_scale_factor;
     elseif currentScaleFactor > tracker.max_scale_factor
         currentScaleFactor = tracker.max_scale_factor;
     end
-    % new tracker scale
+    % new tracker scale  新的 尺度值
     tracker.currentScaleFactor = currentScaleFactor;
 
     % put new object location into the tracker structure
